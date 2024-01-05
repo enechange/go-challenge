@@ -56,12 +56,13 @@ Please document any technical decisions, trade-offs, problems, etc., in REPORT.m
       - max_amperage
       - last_updated
 
-#### Language / Library / Software Design Model:
+#### Language / Libraries / Software Design Model:
 - Language: GO
 - Libraries:
   - Web Application Framework: [Gin](https://gin-gonic.com/)
   - ORM: [GORM](https://gorm.io/)
 - Software Design Model: MVC
+  - In the context of API design, the Controller may directly handle data representation without a separate View file.
 
 #### Steps
 1. Please fork this repository.
