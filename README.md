@@ -13,7 +13,7 @@ Please document any technical decisions, trade-offs, problems, etc., in REPORT.m
 
 #### Requirements:
 -  Specification:
-   - [OCPI 2.2](https://evroaming.org/app/uploads/2020/06/OCPI-2.2-d2.pdf) / Locations module / Sender Interface / GET Method (P.48)
+   - [OCPI 2.2](https://evroaming.org/app/uploads/2020/06/OCPI-2.2-d2.pdf) / Locations module / Sender Interface / GET Method / GET List (P.48)
       - There is no need to read the entire OCPI document.
       - Implementation for authentication (e.g., OCPI Credentials module) is not required.
 
