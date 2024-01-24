@@ -1,0 +1,727 @@
+openapi: 3.0.1
+info:
+  title: Open Charge Point Interface (OCPI) 2.2
+  version: '2.2'
+  description: |-
+    The Open Charge Point Interface (OCPI) enables a scalable,
+    automated EV roaming setup between Charge Point Operators and eMobility Service Providers.
+    It supports authorization, charge point information exchange (including live status updates and transaction events),
+    charge detail record exchange, remote charge point commands and the exchange of smart-charging related information between parties.
+
+    It offers market participants in EV an attractive and scalable solution for (international) roaming between networks,
+    avoiding the costs and innovation-limiting complexities involved with today’s non-automated solutions or with central roaming hubs.
+    As such it helps to enable EV drivers to charge everywhere in a fully-informed way,
+    helps the market to develop quickly and helps market players to execute their business models in the best way.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: 'http://localhost:8080/ocpi/diskymg/2.2'
+    description: Development server
+tags:
+  - name: Locations
+    description: |
+      Module Identifier: locations
+      Data owner: CPO
+      Type: Functional Module
+      The Location objects live in the CPO back-end system. They describe the charging locations of an operator.
+paths:
+  /locations:
+    get:
+      tags:
+        - locations
+      summary: GET List
+      description: |
+        Depending on the URL Segments provided, the GET request can either be used to retrieve information about a list of available
+        Locations (with EVSEs and Connectors) at a CPO (GET List) or it can be used to retrieve information about one specific Location,
+        EVSE or Connector (GET Object).
+
+        Endpoint structure definition:
+        {locations_endpoint_url}?[date_from={date_from}]&[date_to={date_to}]&[offset={offset}]&[limit={l
+        imit}]
+
+        Examples:
+        http://localhost:8080/ocpi/diskymg/2.2/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00
+        http://localhost:8080/ocpi/diskymg/2.2/locations/?offset=50
+        http://localhost:8080/ocpi/diskymg/2.2/locations/?date_from=2019-01-29T12:00:00&limit=100
+        http://localhost:8080/ocpi/diskymg/2.2/locations/?offset=50&limit=100
+
+        If the optional parameters {date_from} and/or {date_to} are provided,
+        only Locations with (last_updated) between the given {date_from} (including) and {date_to} (excluding) will be returned.
+        In order for this to work properly, the following logic MUST be implemented accordingly: If an EVSE is updated,
+        also the 'parent' Location’s last_updated field needs to be updated.
+        Similarly, if a Connector is updated, the EVSE’s last_updated and the Location’s last_updated fields need to be updated.
+        
+        This request is paginated, it supports the pagination related URL parameters.
+      operationId: getLocations
+      parameters:
+        - name: date_from
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateTime'
+            description: Only return Locations that have last_updated after or equal to this Date/Time(inclusive).
+        - name: date_to
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateTime'
+            description: Only return Locations that have last_updated up to this Date/Time, but not including (exclusive).
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            description: The offset of the first object returned. Default is 0.
+            example: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            description: Maximum number of objects to GET.
+            example: 10
+      responses:
+        '200':
+          $ref: '#/components/responses/LocationsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+components:
+  schemas:
+    DateTime:
+      summary: DateTime type
+      description: |-
+        All timestamps are formatted as string(25) following RFC 3339, with some additional limitations.
+        All timestamps SHALL be in UTC. The absence of the timezone designator implies a UTC timestamp. Fractional seconds MAY be
+        used.
+        NOTE that +00:00 is not the same as UTC.
+        Example of how timestamps shall be formatted in OCPI, other formats/patterns are not allowed:
+      type: string
+      format: date-time
+      examples:
+        - '2015-06-29T20:39:09Z'
+        - '2015-06-29T20:39:09'
+        - '2016-12-29T17:45:09.2Z'
+        - '2016-12-29T17:45:09.2'
+        - '2018-01-01T01:08:01.123Z'
+        - '2018-01-01T01:08:01.123'
+    BaseResponse:
+      required:
+        - status_code
+        - timestamp
+      properties:
+        data:
+          description: |
+            * or ?
+            Contains the actual response data object or list of objects from each request, depending on the cardinality of the response data, this is an array (card. * or +), or a single object (card. 1 or ?)
+        status_code:
+          type: integer
+          example: 1000
+        status_message:
+          type: string
+          example: Success
+        timestamp:
+          $ref: '#/components/schemas/DateTime'
+    CountryCode:
+      summary: country_code
+      type: string
+      maxLength: 2
+      minLength: 2
+      description: |
+        ISO-3166 alpha-2 country code
+      example: JP
+    PartyID:
+      summary: party_id
+      type: string
+      maxLength: 3
+      description: |
+        ID of the CPO (following the ISO-15118 standard).
+      example: PLU
+    DisplayText:
+      required:
+        - language
+        - text
+      type: object
+      summary: DisplayText class
+      properties:
+        language:
+          type: string
+          description: Language Code ISO 639-1.
+          example: en
+          maxLength: 2
+          minLength: 2
+        text:
+          type: string
+          example: Standard Tariff
+          description: Text to be displayed to a end user. No markup, html etc. allowed.
+          maxLength: 512
+    URL:
+      summary: URL
+      type: string
+      format: uri
+      maxLength: 255
+    ImageCategory:
+      summary: ImageCategory enum
+      type: string
+      enum:
+        - CHARGER
+        - ENTRANCE
+        - LOCATION
+        - NETWORK
+        - OPERATOR
+        - OTHER
+        - OWNER
+    Image:
+      summary: Image class
+      type: object
+      required:
+        - url
+        - category
+        - type
+      properties:
+        url:
+          $ref: '#/components/schemas/URL'
+        thumbnail:
+          $ref: '#/components/schemas/URL'
+        category:
+          $ref: '#/components/schemas/ImageCategory'
+        type:
+          type: string
+          maxLength: 4
+          description: |
+            Image type like: gif, jpeg, png, svg.
+        width:
+          type: integer
+          maximum: 99999
+        height:
+          type: integer
+          maximum: 99999
+    BusinessDetails:
+      summary: BusinessDetails class
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Name of the operator.
+        website:
+          $ref: '#/components/schemas/URL'
+        logo:
+          $ref: '#/components/schemas/Image'
+    GeoLocation:
+      summary: GeoLocation class
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: string
+          maxLength: 10
+          pattern: ^-?[0-9]{1,2}\.[0-9]{5,7}$
+        longitude:
+          type: string
+          maxLength: 11
+          pattern: ^-?[0-9]{1,3}\.[0-9]{5,7}$
+    AdditionalGeoLocation:
+      summary: AdditionalGeoLocation class
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: string
+          maxLength: 10
+          pattern: ^-?[0-9]{1,2}\.[0-9]{5,7}$
+        longitude:
+          type: string
+          maxLength: 11
+          pattern: ^-?[0-9]{1,3}\.[0-9]{5,7}$
+        name:
+          $ref: '#/components/schemas/DisplayText'
+    ParkingType:
+      summary: ParkingType enum
+      type: string
+      enum:
+        - ALONG_MOTORWAY
+        - PARKING_GARAGE
+        - PARKING_LOT
+        - ON_DRIVEWAY
+        - ON_STREET
+        - UNDERGROUND_GARAGE
+    Status:
+      summary: Status enum
+      description: The status of an EVSE.
+      type: string
+      enum:
+        - AVAILABLE
+        - BLOCKED
+        - CHARGING
+        - INOPERATIVE
+        - OUTOFORDER
+        - PLANNED
+        - REMOVED
+        - RESERVED
+        - UNKNOWN
+    StatusSchedule:
+      summary: StatusSchedule class
+      type: object
+      required:
+        - period_begin
+        - status
+      properties:
+        period_begin:
+          $ref: '#/components/schemas/DateTime'
+        period_end:
+          $ref: '#/components/schemas/DateTime'
+        status:
+          $ref: '#/components/schemas/Status'
+    Capability:
+      summary: Capability enum
+      description: The capability of an EVSE.
+      type: string
+      enum:
+        - CHARGING_PROFILE_CAPABLE
+        - CHARGING_PREFERENCES_CAPABLE
+        - CHIP_CARD_SUPPORT
+        - CONTACTLESS_CARD_SUPPORT
+        - CREDIT_CARD_PAYABLE
+        - DEBIT_CARD_PAYABLE
+        - PED_TERMINAL
+        - REMOTE_START_STOP_CAPABLE
+        - RESERVABLE
+        - RFID_READER
+        - START_SESSION_CONNECTOR_REQUIRED
+        - TOKEN_GROUP_CAPABLE
+        - UNLOCK_CAPABLE
+    ConnectorType:
+      summary: ConnectorType enum
+      type: string
+      enum:
+        - CHADEMO
+        - CHAOJI
+        - DOMESTIC_A
+        - DOMESTIC_B
+        - DOMESTIC_C
+        - DOMESTIC_D
+        - DOMESTIC_E
+        - DOMESTIC_F
+        - DOMESTIC_G
+        - DOMESTIC_H
+        - DOMESTIC_I
+        - DOMESTIC_J
+        - DOMESTIC_K
+        - DOMESTIC_L
+        - DOMESTIC_M
+        - DOMESTIC_N
+        - DOMESTIC_O
+        - GBT_AC
+        - GBT_DC
+        - IEC_60309_2_single_16
+        - IEC_60309_2_three_16
+        - IEC_60309_2_three_32
+        - IEC_60309_2_three_64
+        - IEC_62196_T1
+        - IEC_62196_T1_COMBO
+        - IEC_62196_T2
+        - IEC_62196_T2_COMBO
+        - IEC_62196_T3A
+        - IEC_62196_T3C
+        - NEMA_5_20
+        - NEMA_6_30
+        - NEMA_6_50
+        - NEMA_10_30
+        - NEMA_10_50
+        - NEMA_14_30
+        - NEMA_14_50
+        - PANTOGRAPH_BOTTOM_UP
+        - PANTOGRAPH_TOP_DOWN
+        - TESLA_R
+        - TESLA_S
+    ConnectorFormat:
+      summary: ConnectorFormat enum
+      type: string
+      enum:
+        - SOCKET
+        - CABLE
+    PowerType:
+      summary: PowerType enum
+      type: string
+      enum:
+        - AC_1_PHASE
+        - AC_2_PHASE
+        - AC_2_PHASE_SPLIT
+        - AC_3_PHASE
+        - DC
+    Connector:
+      summary: Connector Object
+      type: object
+      required:
+        - id
+        - standard
+        - format
+        - power_type
+        - max_voltage
+        - max_amperage
+        - last_updated
+      properties:
+        id:
+          type: string
+          maxLength: 36
+        standard:
+          $ref: '#/components/schemas/ConnectorType'
+        format:
+          $ref: '#/components/schemas/ConnectorFormat'
+        power_type:
+          $ref: '#/components/schemas/PowerType'
+        max_voltage:
+          type: integer
+          minimum: 0
+          maximum: 999
+        max_amperage:
+          type: integer
+        max_electric_power:
+          type: integer
+        tariff_ids:
+          type: array
+          items:
+            type: string
+            maxLength: 36
+        terms_and_conditions:
+          $ref: '#/components/schemas/URL'
+        last_updated:
+          $ref: '#/components/schemas/DateTime'
+    ParkingRestriction:
+      summary: ParkingRestriction enum
+      type: string
+      enum:
+        - EV_ONLY
+        - PLUGGED
+        - DISABLED
+        - CUSTOMERS
+        - MOTORCYCLES
+    EVSE:
+      type: object
+      required:
+        - uid
+        - status
+        - connectors
+        - last_updated
+      properties:
+        uid:
+          type: string
+          maxLength: 36
+        evse_id:
+          type: string
+          maxLength: 48
+        status:
+          $ref: '#/components/schemas/Status'
+        status_schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusSchedule'
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Capability'
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Connector'
+        floor_level:
+          type: string
+          maxLength: 4
+        coordinates:
+          $ref: '#/components/schemas/GeoLocation'
+        physical_reference:
+          type: string
+          maxLength: 16
+        directions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisplayText'
+        parking_restrictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParkingRestriction'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        last_updated:
+          type: string
+          format: date-time
+    Facility:
+      description: Facility enum
+      type: string
+      enum:
+        - HOTEL
+        - RESTAURANT
+        - CAFE
+        - MALL
+        - SUPERMARKET
+        - SPORT
+        - RECREATION_AREA
+        - NATURE
+        - MUSEUM
+        - BIKE_SHARING
+        - BUS_STOP
+        - TAXI_STAND
+        - TRAM_STOP
+        - METRO_STATION
+        - TRAIN_STATION
+        - AIRPORT
+        - PARKING_LOT
+        - CARPOOL_PARKING
+        - FUEL_STATION
+        - WIFI
+    RegularHours:
+      description: RegularHours class
+      type: object
+      required:
+        - weekday
+        - period_begin
+        - period_end
+      properties:
+        weekday:
+          type: integer
+          minimum: 1
+          maximum: 7
+          description: |
+            Number of day in the week, from Monday (1) till Sunday (7)
+        period_begin:
+          type: string
+          maxLength: 5
+          pattern: ^[0-1][0-9]|2[0-3]):[0-5][0-9]$
+        period_end:
+          type: string
+          maxLength: 5
+          pattern: ^[0-1][0-9]|2[0-3]):[0-5][0-9]$
+    ExceptionalPeriod:
+      description: ExceptionalPeriod class
+      type: object
+      required:
+        - period_begin
+        - period_end
+      properties:
+        period_begin:
+          $ref: '#/components/schemas/DateTime'
+        period_end:
+          $ref: '#/components/schemas/DateTime'
+    Hours:
+      description: Hours class
+      type: object
+      required:
+        - twentyfourseven
+      properties:
+        twentyfourseven:
+          type: boolean
+        regular_hours:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegularHours'
+        exceptional_openings:
+          $ref: '#/components/schemas/ExceptionalPeriod'
+        exceptional_closings:
+          $ref: '#/components/schemas/ExceptionalPeriod'
+    EnergySourceCategory:
+      description: EnergySourceCategory enum
+      type: string
+      enum:
+        - NUCLEAR
+        - GENERAL_FOSSIL
+        - COAL
+        - GAS
+        - GENERAL_GREEN
+        - SOLAR
+        - WIND
+        - WATER
+    EnergySource:
+      description: EnergySource class
+      type: object
+      required:
+        - source
+        - percentage
+      properties:
+        source:
+          $ref: '#/components/schemas/EnergySourceCategory'
+        percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          multipleOf: 0.01
+    EnvironmentalImpactCategory:
+      description: EnvironmentalImpactCategory enum
+      type: string
+      enum:
+        - NUCLEAR_WASTE
+        - CARBON_DIOXIDE
+    EnvironmentalImpact:
+      description: EnvironmentalImpact class
+      type: object
+      required:
+        - category
+        - amount
+      properties:
+        category:
+          $ref: '#/components/schemas/EnvironmentalImpactCategory'
+        amount:
+          type: number
+          minimum: 0
+          maximum: 100
+          multipleOf: 0.01
+    EnergyMix:
+      description: EnergyMix class
+      type: object
+      required:
+        - is_green_energy
+      properties:
+        is_green_energy:
+          type: boolean
+        energy_sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnergySource'
+        environ_impact:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentalImpact'
+        supplier_name:
+          type: string
+          maxLength: 64
+        energy_product_name:
+          type: string
+          maxLength: 64
+    Location:
+      type: object
+      required:
+        - country_code
+        - party_id
+        - id
+        - publish
+        - address
+        - city
+        - country
+        - coordinates
+        - time_zone
+        - last_updated
+      properties:
+        country_code:
+          $ref: '#/components/schemas/CountryCode'
+        party_id:
+          $ref: '#/components/schemas/PartyID'
+        id:
+          type: string
+          maxLength: 36
+        publish:
+          type: boolean
+        publish_allowed_to:
+          type: array
+          items:
+            type: string
+            maxLength: 3
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+          maxLength: 45
+        city:
+          type: string
+          maxLength: 45
+        postal_code:
+          type: string
+          maxLength: 10
+        state:
+          type: string
+          maxLength: 20
+        country:
+          type: string
+          maxLength: 3
+        coordinates:
+          $ref: '#/components/schemas/GeoLocation'
+        related_locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalGeoLocation'
+        parking_type:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParkingType'
+        evses:
+          type: array
+          items:
+            $ref: '#/components/schemas/EVSE'
+        directions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisplayText'
+        operator:
+          $ref: '#/components/schemas/BusinessDetails'
+        suboperator:
+          $ref: '#/components/schemas/BusinessDetails'
+        owner:
+          $ref: '#/components/schemas/BusinessDetails'
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Facility'
+        time_zone:
+          type: string
+          maxLength: 255
+        opening_times:
+          $ref: '#/components/schemas/Hours'
+        charging_when_closed:
+          type: boolean
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        energy_mix:
+          $ref: '#/components/schemas/EnergyMix'
+        last_updated:
+          $ref: '#/components/schemas/DateTime'
+  headers:
+    Link:
+      schema:
+        type: string
+      description: Link to the 'next' page should be provided when this is NOT the last page. The Link should also contain any filters present in the original request. See the examples below.
+    X-Total-Count:
+      schema:
+        type: integer
+      description: |
+        (Custom HTTP Header) The total number of objects available in the server system that match the given query (including the given query parameters, for example: date_to and date_from but excluding limit and offset) and that are available to this client. For example: The CPO server might return less CDR objects to an eMSP than the total number of CDRs available in the CPO system.
+    X-Limit:
+      schema:
+        type: integer
+      description: |
+        (Custom HTTP Header) The maximum number of objects that the server can return. Note that this is an upper limit. If there are not enough remaining objects to return, fewer objects than this upper limit number will be returned, X-Limit SHALL then still show the upper limit, not the number of objects returned.
+  responses:
+    LocationsResponse:
+      description: Success
+      headers:
+        Link:
+          $ref: '#/components/headers/Link'
+        X-Total-Count:
+          $ref: '#/components/headers/X-Total-Count'
+        X-Limit:
+          $ref: '#/components/headers/X-Limit'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseResponse'
+              - properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Location'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status_code: 400
+            status_message: Bad Request
+            timestamp: '2018-01-01T01:08:01.123Z'
