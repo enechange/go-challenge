@@ -99,7 +99,7 @@ func (r *Connector) ToOcpi() (d ocpi.Connector) {
 
 func FindLocations(dateFrom, dateTo *time.Time, offset, limit *int) ([]*Location, error) {
 	var rows []*Location
-	query := DB().Where("").Preload("OpeningTimesRegularHours").Preload("Evses.Connectors")
+	query := DB().Where("").Preload("OpeningTimesRegularHours").Preload("Evses.Connectors").Order("created_at ASC")
 	if dateFrom != nil {
 		// Only return Locations that have last_updated after or equal to this Date/Time (inclusive).
 		query = query.Where("last_updated >= ?", dateFrom)

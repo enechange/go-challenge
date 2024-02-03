@@ -111,6 +111,7 @@ func Seed() error {
 			{Weekday: 6, PeriodBegin: "07:00", PeriodEnd: "18:00"},
 			{Weekday: 7, PeriodBegin: "07:00", PeriodEnd: "18:00"},
 		},
+		Model:       gorm.Model{CreatedAt: time.Date(2001, 4, 1, 0, 0, 0, 0, time.UTC)},
 		LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 	}
 
@@ -158,6 +159,7 @@ func Seed() error {
 		},
 		TimeZone:                    "Europe/Amsterdam",
 		OpeningTimesTwentyfourseven: true,
+		Model:                       gorm.Model{CreatedAt: time.Date(2002, 4, 1, 0, 0, 0, 0, time.UTC)},
 		LastUpdated:                 time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 	}
 
@@ -190,6 +192,7 @@ func Seed() error {
 		},
 		TimeZone:                    "Europe/Berlin",
 		OpeningTimesTwentyfourseven: true,
+		Model:                       gorm.Model{CreatedAt: time.Date(2003, 4, 1, 0, 0, 0, 0, time.UTC)},
 		LastUpdated:                 time.Date(2023, 4, 1, 0, 0, 0, 0, time.UTC),
 	}
 

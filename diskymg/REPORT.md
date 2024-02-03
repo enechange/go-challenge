@@ -25,6 +25,11 @@ https://www.npmjs.com/package/@plugoinc/ocpi-openapi-yaml?activeTab=code
 ### date_from, date_to での絞り
 date_from は閾値を含む、date_to は閾値を含まない、はず。
 
+### ソート
+仕様書PDFのP18の「Paginated Response」を見ると、
+「最も古いもの (last_updated フィールドではなく作成日による) を最初に返すベストプラクティス。」
+のようなことが英語で書かれているようなので、created_atでORDER BYする。
+
 ### package構成検討
 MVCに当てはめて考えると、  
 Model: package models: gormの構造体やそれに関する処理  
