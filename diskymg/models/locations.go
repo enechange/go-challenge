@@ -53,7 +53,7 @@ func (r *Location) ToOcpi() (d ocpi.Location) {
 			Twentyfourseven: r.OpeningTimesTwentyfourseven,
 			RegularHours:    &ocpiRegularHours,
 		},
-		LastUpdated: r.UpdatedAt.UTC(),
+		LastUpdated: r.LastUpdated.UTC(),
 	}
 }
 
@@ -73,7 +73,7 @@ func (r *Evse) ToOcpi() (d ocpi.EVSE) {
 		EvseId:      r.EvseID,
 		Status:      ocpi.Status(r.Status),
 		Connectors:  ocpiConnectors,
-		LastUpdated: r.UpdatedAt.UTC(),
+		LastUpdated: r.LastUpdated.UTC(),
 	}
 }
 
@@ -93,7 +93,7 @@ func (r *Connector) ToOcpi() (d ocpi.Connector) {
 		PowerType:   ocpi.PowerType(r.PowerType),
 		MaxVoltage:  r.MaxVoltage,
 		MaxAmperage: r.MaxAmperage,
-		LastUpdated: r.UpdatedAt.UTC(),
+		LastUpdated: r.LastUpdated.UTC(),
 	}
 }
 
@@ -102,11 +102,11 @@ func FindLocations(dateFrom, dateTo *time.Time, offset, limit *int) ([]*Location
 	query := DB().Where("").Preload("OpeningTimesRegularHours").Preload("Evses.Connectors")
 	if dateFrom != nil {
 		// Only return Locations that have last_updated after or equal to this Date/Time (inclusive).
-		query = query.Where("updated_at >= ?", dateFrom)
+		query = query.Where("last_updated >= ?", dateFrom)
 	}
 	if dateTo != nil {
 		// Only return Locations that have last_updated up to this Date/Time, but not including (exclusive).
-		query = query.Where("updated_at < ?", dateTo)
+		query = query.Where("last_updated < ?", dateTo)
 	}
 	if offset != nil {
 		query = query.Offset(*offset)

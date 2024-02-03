@@ -77,8 +77,11 @@ erDiagram
 
 仕様書PDFを見たところevseのuidはdatabase IDでも良いので、gormのデフォルト主キーのidをAPI側として利用する。  
 
-LastUpdatedはgormのデフォルトのUpdatedAtを利用する。  
-（UpdatedAtだとあらゆる操作から自動的に更新されてしまうから、LastUpdatedを明示的に管理したい場合は別カラムの方が良い）  
+LastUpdated は UpdatedAt ではなく、別途カラムを用意する。
+理由としては、PDFの「8.2.2.2. PUT Method」を読むと、PUT時に Evse や Connector のみを渡して更新できるらしく、
+その場合親オブジェクト(Connector なら Evse と Location)の LastUpdated を更新するらしい。
+UpdatedAt を LastUpdated として利用する場合、例えば Connector の UpdatedAt が更新された場合、親である Evse と Location の UpdatedAt を手動で更新する必要がある。
+それは UpdatedAt の機能を潰している気もするので、別途カラムを用意する。
 
 ### 確認方法検討
 テストデータの作成方法は Seed() で適当に入れることにする。  

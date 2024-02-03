@@ -64,8 +64,10 @@ func Seed() error {
 						PowerType:   "AC_3_PHASE",
 						MaxVoltage:  220,
 						MaxAmperage: 16,
+						LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
+				LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 			},
 			{
 				EvseID: lib.Ptr("BE*BEC*E041503002"),
@@ -77,8 +79,10 @@ func Seed() error {
 						PowerType:   "AC_3_PHASE",
 						MaxVoltage:  220,
 						MaxAmperage: 16,
+						LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
+				LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 			},
 			{
 				EvseID: lib.Ptr("SE*EVC*E000000123"),
@@ -90,8 +94,10 @@ func Seed() error {
 						PowerType:   "AC_3_PHASE",
 						MaxVoltage:  230,
 						MaxAmperage: 32,
+						LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
+				LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		TimeZone:                    "Europe/Brussels",
@@ -105,8 +111,7 @@ func Seed() error {
 			{Weekday: 6, PeriodBegin: "07:00", PeriodEnd: "18:00"},
 			{Weekday: 7, PeriodBegin: "07:00", PeriodEnd: "18:00"},
 		},
-		CreatedAt: time.Date(2020, 4, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedAt: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
+		LastUpdated: time.Date(2021, 4, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	location2 := Location{
@@ -130,8 +135,10 @@ func Seed() error {
 						PowerType:   "AC_3_PHASE",
 						MaxVoltage:  220,
 						MaxAmperage: 16,
+						LastUpdated: time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
+				LastUpdated: time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 			},
 			{
 				EvseID: lib.Ptr("NL*ALF*E000000002"),
@@ -143,14 +150,15 @@ func Seed() error {
 						PowerType:   "AC_1_PHASE",
 						MaxVoltage:  230,
 						MaxAmperage: 8,
+						LastUpdated: time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
+				LastUpdated: time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		TimeZone:                    "Europe/Amsterdam",
 		OpeningTimesTwentyfourseven: true,
-		CreatedAt:                   time.Date(2020, 4, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedAt:                   time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
+		LastUpdated:                 time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	location3 := Location{
@@ -174,14 +182,15 @@ func Seed() error {
 						PowerType:   "AC_3_PHASE",
 						MaxVoltage:  220,
 						MaxAmperage: 16,
+						LastUpdated: time.Date(2023, 4, 1, 0, 0, 0, 0, time.UTC),
 					},
 				},
+				LastUpdated: time.Date(2023, 4, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		TimeZone:                    "Europe/Berlin",
 		OpeningTimesTwentyfourseven: true,
-		CreatedAt:                   time.Date(2020, 4, 1, 0, 0, 0, 0, time.UTC),
-		UpdatedAt:                   time.Date(2023, 4, 1, 0, 0, 0, 0, time.UTC),
+		LastUpdated:                 time.Date(2023, 4, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	if err := db.Create([]Location{location1, location2, location3}).Error; err != nil {
