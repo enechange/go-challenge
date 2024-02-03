@@ -24,8 +24,6 @@ type Location struct {
 	OpeningTimesTwentyfourseven bool
 	OpeningTimesRegularHours    []LocationOpeningTimesRegularHour
 	LastUpdated                 time.Time
-	CreatedAt                   time.Time
-	UpdatedAt                   time.Time
 }
 
 type LocationOpeningTimesRegularHour struct {
@@ -47,8 +45,6 @@ type Evse struct {
 	Status      string
 	Connectors  []Connector
 	LastUpdated time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
 }
 
 type Connector struct {
@@ -62,6 +58,4 @@ type Connector struct {
 	MaxVoltage  int
 	MaxAmperage int
 	LastUpdated time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
 }
