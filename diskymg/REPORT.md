@@ -88,6 +88,17 @@ LastUpdated は UpdatedAt ではなく、別途カラムを用意する。
 UpdatedAt を LastUpdated として利用する場合、例えば Connector の UpdatedAt が更新された場合、親である Evse と Location の UpdatedAt を手動で更新する必要がある。
 それは UpdatedAt の機能を潰している気もするので、別途カラムを用意する。
 
+# テストコード
+実際にURLを叩いてレスポンスを確認するテストを優先的に書く。package controllers に書く。
+
+テストDBをローカル環境に用意して、標準のやり方で実行する。
+
+```
+% psql -U postgres
+% CREATE DATABASE ocpi_test;
+```
+
+
 ### 確認方法検討
 テストデータの作成方法は Seed() で適当に入れることにする。  
 
