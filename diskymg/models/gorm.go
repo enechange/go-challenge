@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -14,19 +13,27 @@ import (
 var db *gorm.DB
 
 // Init initializes database
-func InitDB() error {
+func InitDB(host, user, password, dbname, port string, autoMigrate, seed bool) error {
 	var err error
-	host := os.Getenv("DB_HOST")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_DATABASE")
-	port := os.Getenv("DB_PORT")
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo", host, user, password, dbname, port)
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return fmt.Errorf("failed to Open: %w", err)
 	}
+
+	if autoMigrate {
+		if err := AutoMigrate(); err != nil {
+			return fmt.Errorf("failed to Open: %w", err)
+		}
+	}
+
+	if seed {
+		if err := Seed(); err != nil {
+			return fmt.Errorf("failed to Seed: %w", err)
+		}
+	}
+
 	return nil
 }
 
