@@ -7,67 +7,34 @@ As part of the ENECHANGE interview process, we are asking you to work on a small
 
 ### Objectives
 
-Create an endpoint that meets the following requirements using the specified language, library, and software design model.
+Create an endpoint that meets the following requirements using the template.
 
 Please document any technical decisions, trade-offs, problems, etc., in REPORT.md (you may write in either Japanese or English).
 
 #### Requirements:
+Please create an endpoint for searching chargers within a specified range, based on the interface specifications provided in the PDF document.
+Use the data stored in the provided CSV files by importing it into the database.
+
 -  Specification:
-   - [OCPI 2.2](https://evroaming.org/app/uploads/2020/06/OCPI-2.2-d2.pdf) / Locations module / Sender Interface / GET Method / GET List (P.48)
-      - There is no need to read the entire OCPI document.
-      - Implementation for authentication (e.g., OCPI Credentials module) is not required.
+   - [Go-Challenge Interface Specification Document](./Go-Challenge%20Interface%20Specification%20Document.pdf)
 
-- You are free to decide the endpoint path.
+-  Data:
+    - [locations.csv](./resources/locations.csv)
+    - [evses.csv](./resources/evses.csv)
 
-- The response should be as follows:
-  - Return 3 Locations if there is no specified filtering.
-  - Each Location should have between 1 and 3 EVSEs.
-  - Each EVSE should have one Connector.
-  - Include only the following specified items in the response and process any unnecessary items according to OCPI Cardinality (P.9):
-    - The values of each item can be anything as long as they match the specification.
-    - Location:
-      - country_code
-      - party_id
-      - id
-      - publish
-      - name
-      - address
-      - city
-      - country
-      - coordinates
-      - evses
-      - time_zone
-      - opening_times
-          - twentyfourseven
-          - regular_hours
-      - last_updated
-    - EVSE:
-      - uid
-      - evse_id
-      - status
-      - connectors
-      - last_updated
-    - Connector:
-      - id
-      - standard
-      - format
-      - power_type
-      - max_voltage
-      - max_amperage
-      - last_updated
-
-#### Language / Libraries / Software Design Model:
+#### Language / Libraries:
 - Language: GO
 - Libraries:
   - Web Application Framework: [Gin](https://gin-gonic.com/)
   - ORM: [GORM](https://gorm.io/)
-- Software Design Model: MVC
-  - In the context of API design, the Controller may directly handle data representation without a separate View file.
+
+#### Template:
+We have prepared a template that sets up a server and connects to a database.
+Please add code in the pkg directory to implement the endpoint.
 
 #### Steps
 1. Please fork this repository.
-2. Create a new branch. (The branch name should be challenge/YOURNAME where YOURNAME can be your real name or your Github Account name, for example, challenge/shirakia)
-3. Create a development directory directly under the repository. (e.g., shirakia)
-4. Proceed with your implementation inside this directory.
-5. After completion, create a Pull Request and please provide us with the URL.
-6. You may continue to commit to your branch even after you have provided us with the URL of the Pull Request.
+2. Create a new branch. (The branch name should be `challenge/YOURACCOUNT` where `YOURACCOUNT` is your Github Account name, for example, `challenge/shirakia`)
+3. Proceed with your implementation using provided template.
+4. After completion, create a Pull Request and please provide us with the URL.
+5. You may continue to commit to your branch even after you have provided us with the URL of the Pull Request.
