@@ -6,7 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	config "go-challenge/pkg/config"
+	config "go-challenge/config"
 )
 
 var (

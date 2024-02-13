@@ -1,9 +1,9 @@
-package router
+package main
 
 import (
 	"context"
-	"go-challenge/pkg/config"
-	"go-challenge/pkg/controllers"
+	"go-challenge/config"
+	"go-challenge/router"
 	"log"
 	"net/http"
 	"os"
@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-func Init() {
+func serverInit() {
 	cnf := config.GetConfig()
 
-	r := controllers.Router()
+	r := router.Router()
 	srv := &http.Server{
 		Addr:    ":" + cnf.GinPort,
 		Handler: r,

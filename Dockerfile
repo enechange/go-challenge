@@ -12,7 +12,7 @@ COPY . /app
 RUN go install github.com/cosmtrek/air@latest \
 	&& go mod download && go mod tidy
 
-RUN go build -o /tmp/main cmd/main.go
+RUN go build -o /tmp/main .
 
 RUN echo 'PATH=$PATH:/app/bin' > /root/.bashrc
 
