@@ -12,15 +12,18 @@ Create an endpoint that meets the following requirements using the template.
 Please document any technical decisions, trade-offs, problems, etc., in REPORT.md (you may write in either Japanese or English).
 
 #### Requirements:
-Please create an endpoint for searching chargers within a specified range, based on the interface specifications provided in the PDF document.
-Use the data stored in the provided CSV files by importing it into the database.
+Please create an endpoint to search for chargers within a specified range, according to the interface specifications outlined in the provided PDF document.
 
--  Specification:
+You can use the provided CSV files as sample data by importing them into the database.
+
+While writing tests is not mandatory, please be mindful to design for testability.
+
+- Specification:
    - [Go-Challenge Interface Specification Document](./Go-Challenge%20Interface%20Specification%20Document.pdf)
 
--  Data:
-    - [locations.csv](./resources/locations.csv)
-    - [evses.csv](./resources/evses.csv)
+- CSV Files:
+    - [locations.csv](./sample/locations.csv)
+    - [evses.csv](./sample/evses.csv)
 
 #### Language / Libraries:
 - Language: GO
@@ -29,8 +32,9 @@ Use the data stored in the provided CSV files by importing it into the database.
   - ORM: [GORM](https://gorm.io/)
 
 #### Template:
-We have prepared a template that sets up a server and connects to a database.
-Please add code in the pkg directory to implement the endpoint.
+A template has been prepared in the codebase that sets up a server and prepares the connection to a database.
+
+Please add code to implement the endpoint.
 
 #### Steps
 1. Please fork this repository.
