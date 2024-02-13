@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: go-challenge-app
+    build: .
+    command: sh -c "/wait && air"
+    environment:
+      - WAIT_HOSTS=go-challenge-mysql:3306
+      - GIN_MODE=release
+      - GIN_PORT=8080
+      - GOPATH=
+      - MYSQL_HOST=go-challenge-mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=go-challenge_development
+    depends_on:
+      - mysql
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
+    volumes:
+      - .:/app
+    ports:
+      - 8070:8080
+  mysql:
+    container_name: go-challenge-mysql
+    restart: always
+    image: mysql:8.0
+    volumes:
+      - go-challenge-mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: go-challenge_development
+      MYSQL_ROOT_PASSWORD: password
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake --sql-mode=""
+    ports:
+      - 3306:3306
+
+volumes:
+  go-challenge-mysql:
+    driver: local
