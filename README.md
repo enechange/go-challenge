@@ -7,7 +7,7 @@ As part of the ENECHANGE interview process, we are asking you to work on a small
 
 ### Objectives
 
-Create an endpoint that meets the following requirements using the template.
+Create an endpoint that meets the following requirements using the specified language, library and template.
 
 Please document any technical decisions, trade-offs, problems, etc., in REPORT.md (you may write in either Japanese or English).
 
