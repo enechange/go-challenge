@@ -18,4 +18,3 @@ RUN echo 'PATH=$PATH:/app/bin' > /root/.bashrc
 
 RUN curl -SL https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait -o /wait
 RUN chmod +x /wait
-COPY ./init.sql /docker-entrypoint-initdb.d/
