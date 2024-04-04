@@ -31,6 +31,8 @@ services:
     image: mysql:8.0
     volumes:
       - go-challenge-mysql:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sample/:/var/lib/mysql-files/
     environment:
       MYSQL_DATABASE: go-challenge_development
       MYSQL_ROOT_PASSWORD: password

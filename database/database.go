@@ -43,3 +43,7 @@ func openMySQL() {
 		panic(err)
 	}
 }
+
+func GetDB() *gorm.DB {
+	return dbMy
+}

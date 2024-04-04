@@ -14,7 +14,7 @@ import (
 
 func serverInit() {
 	cnf := config.GetConfig()
-
+	router.InitLocationService()
 	r := router.Router()
 	srv := &http.Server{
 		Addr:    ":" + cnf.GinPort,
