@@ -27,3 +27,9 @@ type LocationResponse struct {
 	Coordinates GeoLocation    `json:"coordinates"`
 	Evses       []EvseResponse `json:"evses"`
 }
+
+type LocationSearchParameters struct {
+    Longitude float64 `form:"longitude" binding:"required"`
+    Latitude  float64 `form:"latitude" binding:"required"`
+    Radius    int     `form:"radius,default=100"`
+}

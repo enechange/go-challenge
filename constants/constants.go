@@ -1,14 +1,19 @@
 package constants
 
-var StatusMap = map[int]string{
-	1: "AVAILABLE",
-	2: "BLOCKED",
-	3: "CHARGING",
-	4: "INOPERATIVE",
-	5: "OUTOFORDER",
-	6: "PLANNED",
-	7: "REMOVED",
-	8: "RESERVED",
-	9: "UNKNOWN",
-}
+type Status int8
 
+const (
+    AVAILABLE Status = iota + 1
+    BLOCKED
+    CHARGING
+    INOPERATIVE
+    OUTOFORDER
+    PLANNED
+    REMOVED
+    RESERVED
+    UNKNOWN
+)
+
+func (s Status) String() string {
+    return [...]string{"AVAILABLE", "BLOCKED", "CHARGING", "INOPERATIVE", "OUTOFORDER", "PLANNED", "REMOVED", "RESERVED", "UNKNOWN"}[s-1]
+}

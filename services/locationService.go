@@ -3,15 +3,20 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"go-challenge/constants"
-	"go-challenge/interfaces"
 	"go-challenge/models"
+	"go-challenge/repositories"
 )
 
-type LocationService struct {
-	LocationRepository interfaces.ILocationRepository
+type ILocationService interface {
+	GetNearbyEvses(userLongitude float32, userLatitude float32, radius int) ([]models.LocationResponse, error)
 }
+
+type LocationService struct {
+	LocationRepository repositories.ILocationRepository
+}
+
+var _ ILocationService = &LocationService{}
 
 func (s *LocationService) GetNearbyEvses(userLongitude float32, userLatitude float32, radius int) ([]models.LocationResponse, error) {
 	radius = radius * 1000 // set radius to km
@@ -30,13 +35,10 @@ func (s *LocationService) GetNearbyEvses(userLongitude float32, userLatitude flo
 		}
 		// Map status string from db value of int
 		for _, evseDbResult := range evseDbResults {
-			statusStr, ok := constants.StatusMap[evseDbResult.Status]
-			if !ok {
-				return nil, fmt.Errorf("invalid status code for: %s", evseDbResult.Uid)
-			}
+			statusString := constants.Status(evseDbResult.Status)
 			evseResponses = append(evseResponses, models.EvseResponse{
 				Uid:    evseDbResult.Uid,
-				Status: statusStr,
+				Status: statusString.String(),
 			})
 		}
 
