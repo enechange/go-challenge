@@ -2,11 +2,11 @@ package database
 
 import (
 	"fmt"
+	"go-challenge/configs"
+	"go-challenge/internal/infrastructure/dto"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	config "go-challenge/config"
 )
 
 var (
@@ -24,7 +24,7 @@ func Close() {
 }
 
 func openMySQL() {
-	cnf := config.GetConfig()
+	cnf := configs.GetConfig()
 
 	database := cnf.MySQLDatabase
 
@@ -42,4 +42,17 @@ func openMySQL() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetDB() *gorm.DB {
+	return dbMy
+}
+
+func MigrateExecution() error {
+	err := dbMy.AutoMigrate(dto.Location{}, dto.EVSE{})
+	if err != nil {
+		return fmt.Errorf("migration execution failed: %w", err)
+	}
+	fmt.Println("migration was successfully performed")
+	return nil
 }

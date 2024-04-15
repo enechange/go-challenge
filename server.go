@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"go-challenge/config"
-	"go-challenge/router"
+	"go-challenge/configs"
+	"go-challenge/internal/presentation/router"
+	validators "go-challenge/internal/presentation/validator"
 	"log"
 	"net/http"
 	"os"
@@ -13,7 +14,9 @@ import (
 )
 
 func serverInit() {
-	cnf := config.GetConfig()
+	cnf := configs.GetConfig()
+
+	validators.RegisterCustomValidations()
 
 	r := router.Router()
 	srv := &http.Server{
