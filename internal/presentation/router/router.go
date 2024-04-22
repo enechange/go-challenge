@@ -2,6 +2,7 @@ package router
 
 import (
 	"go-challenge/internal/application/usecase"
+	"go-challenge/internal/infrastructure/database"
 	"go-challenge/internal/infrastructure/query"
 	"go-challenge/internal/presentation/controllers"
 
@@ -16,7 +17,9 @@ func Router() *gin.Engine {
 		ctx.JSON(200, map[string]string{"status": "OK"})
 	})
 
-	activeEVSELocationQueryServiceGorm := query.NewActiveEVSELocationQueryServiceGorm()
+	db := database.GetDB()
+
+	activeEVSELocationQueryServiceGorm := query.NewActiveEVSELocationQueryServiceGorm(db)
 	activeEVSELocationUseCase := usecase.NewActiveEVSELocationUseCase(activeEVSELocationQueryServiceGorm)
 	activeEVSELocationController := controllers.NewActiveEVSELocationController(activeEVSELocationUseCase)
 

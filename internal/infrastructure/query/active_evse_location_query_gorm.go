@@ -3,7 +3,6 @@ package query
 import (
 	"context"
 	"go-challenge/internal/domain"
-	"go-challenge/internal/infrastructure/database"
 
 	"gorm.io/gorm"
 )
@@ -12,9 +11,9 @@ type ActiveEVSELocationQueryServiceGorm struct {
 	db *gorm.DB
 }
 
-func NewActiveEVSELocationQueryServiceGorm() *ActiveEVSELocationQueryServiceGorm {
+func NewActiveEVSELocationQueryServiceGorm(db *gorm.DB) *ActiveEVSELocationQueryServiceGorm {
 	return &ActiveEVSELocationQueryServiceGorm{
-		db: database.GetDB(),
+		db: db,
 	}
 }
 
