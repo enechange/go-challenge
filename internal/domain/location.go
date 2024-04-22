@@ -7,13 +7,3 @@ type Location struct {
 	Coordinates GeoLocation
 	EVSES       []EVSE
 }
-
-type AvailableEVSELocation struct {
-	ID        string
-	Name      *string
-	Address   string
-	Latitude  float64
-	Longitude float64
-	UID       string
-	Status    int
-}

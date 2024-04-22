@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"go-challenge/internal/application/dto"
 	"go-challenge/internal/application/query/mock"
 	"go-challenge/internal/domain"
 	"testing"
@@ -34,7 +35,7 @@ func TestFindLocationsWithActiveEVSE(t *testing.T) {
 			radius:    10,
 			mockSetup: func() {
 				mockRepo.EXPECT().FindLocationsWithActiveEVSE(gomock.Any(), 35.6895, 139.6917, 10).
-					Return([]domain.AvailableEVSELocation{
+					Return([]dto.AvailableEVSELocation{
 						{ID: "1", Name: new(string), Address: "東京都新宿区", Latitude: 35.6895, Longitude: 139.6917, UID: "UID123", Status: 1},
 					}, nil)
 			},
@@ -74,13 +75,13 @@ func TestFindLocationsWithActiveEVSE(t *testing.T) {
 func TestConvertQueryResultToLocations(t *testing.T) {
 	tests := []struct {
 		name           string
-		input          []domain.AvailableEVSELocation
+		input          []dto.AvailableEVSELocation
 		expectedOutput []domain.Location
 		expectedError  error
 	}{
 		{
 			name: "Normal Case",
-			input: []domain.AvailableEVSELocation{
+			input: []dto.AvailableEVSELocation{
 				{
 					ID:        "1",
 					Name:      new(string),
@@ -109,13 +110,13 @@ func TestConvertQueryResultToLocations(t *testing.T) {
 		},
 		{
 			name:           "Empty Input",
-			input:          []domain.AvailableEVSELocation{},
+			input:          []dto.AvailableEVSELocation{},
 			expectedOutput: []domain.Location{},
 			expectedError:  nil,
 		},
 		{
 			name: "Duplicate ID",
-			input: []domain.AvailableEVSELocation{
+			input: []dto.AvailableEVSELocation{
 				{
 					ID:        "1",
 					Name:      new(string),

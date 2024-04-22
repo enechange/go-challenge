@@ -3,8 +3,8 @@ package query
 import (
 	"context"
 	"errors"
+	"go-challenge/internal/application/dto"
 	"go-challenge/internal/application/query/mock"
-	"go-challenge/internal/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,7 +17,7 @@ func TestFindLocationsWithActiveEVSE(t *testing.T) {
 		latitude          float64
 		longitude         float64
 		radius            int
-		expectedLocations []domain.AvailableEVSELocation
+		expectedLocations []dto.AvailableEVSELocation
 		expectedError     error
 		prepareMockFn     func(m *mock.MockActiveEVSELocationQueryService)
 	}{
@@ -26,12 +26,12 @@ func TestFindLocationsWithActiveEVSE(t *testing.T) {
 			latitude:  35.6895,
 			longitude: 139.6917,
 			radius:    10,
-			expectedLocations: []domain.AvailableEVSELocation{
+			expectedLocations: []dto.AvailableEVSELocation{
 				{ID: "1", Name: new(string), Address: "東京都新宿区...", Latitude: 35.6895, Longitude: 139.6917, UID: "UID123", Status: 1},
 			},
 			prepareMockFn: func(m *mock.MockActiveEVSELocationQueryService) {
 				m.EXPECT().FindLocationsWithActiveEVSE(gomock.Any(), 35.6895, 139.6917, 10).
-					Return([]domain.AvailableEVSELocation{{ID: "1", Name: new(string), Address: "東京都新宿区...", Latitude: 35.6895, Longitude: 139.6917, UID: "UID123", Status: 1}}, nil).Times(1)
+					Return([]dto.AvailableEVSELocation{{ID: "1", Name: new(string), Address: "東京都新宿区...", Latitude: 35.6895, Longitude: 139.6917, UID: "UID123", Status: 1}}, nil).Times(1)
 			},
 		},
 		{
@@ -63,11 +63,11 @@ func TestFindLocationsWithActiveEVSE(t *testing.T) {
 			latitude:          35.6895,
 			longitude:         139.6917,
 			radius:            0,
-			expectedLocations: []domain.AvailableEVSELocation{},
+			expectedLocations: []dto.AvailableEVSELocation{},
 			expectedError:     nil,
 			prepareMockFn: func(m *mock.MockActiveEVSELocationQueryService) {
 				m.EXPECT().FindLocationsWithActiveEVSE(gomock.Any(), 35.6895, 139.6917, 0).
-					Return([]domain.AvailableEVSELocation{}, nil).Times(1)
+					Return([]dto.AvailableEVSELocation{}, nil).Times(1)
 			},
 		},
 	}

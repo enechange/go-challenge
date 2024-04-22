@@ -2,7 +2,7 @@ package query
 
 import (
 	"context"
-	"go-challenge/internal/domain"
+	"go-challenge/internal/application/dto"
 )
 
 type ActiveEVSELocationQueryService interface {
@@ -11,7 +11,7 @@ type ActiveEVSELocationQueryService interface {
 		latitude, longitude float64,
 		radius int,
 	) (
-		[]domain.AvailableEVSELocation,
+		[]dto.AvailableEVSELocation,
 		error,
 	)
 }

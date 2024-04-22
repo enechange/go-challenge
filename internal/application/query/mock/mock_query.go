@@ -11,7 +11,7 @@ package mock
 
 import (
 	context "context"
-	domain "go-challenge/internal/domain"
+	"go-challenge/internal/application/dto"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -41,10 +41,10 @@ func (m *MockActiveEVSELocationQueryService) EXPECT() *MockActiveEVSELocationQue
 }
 
 // FindLocationsWithActiveEVSE mocks base method.
-func (m *MockActiveEVSELocationQueryService) FindLocationsWithActiveEVSE(ctx context.Context, latitude, longitude float64, radius int) ([]domain.AvailableEVSELocation, error) {
+func (m *MockActiveEVSELocationQueryService) FindLocationsWithActiveEVSE(ctx context.Context, latitude, longitude float64, radius int) ([]dto.AvailableEVSELocation, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindLocationsWithActiveEVSE", ctx, latitude, longitude, radius)
-	ret0, _ := ret[0].([]domain.AvailableEVSELocation)
+	ret0, _ := ret[0].([]dto.AvailableEVSELocation)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

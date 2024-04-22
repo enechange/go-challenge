@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"go-challenge/internal/application/dto"
 	"go-challenge/internal/domain"
 
 	"gorm.io/gorm"
@@ -21,9 +22,9 @@ func (s *ActiveEVSELocationQueryServiceGorm) FindLocationsWithActiveEVSE(
 	ctx context.Context,
 	latitude, longitude float64,
 	radius int,
-) ([]domain.AvailableEVSELocation, error) {
+) ([]dto.AvailableEVSELocation, error) {
 
-	var availableEVSELocations []domain.AvailableEVSELocation
+	var availableEVSELocations []dto.AvailableEVSELocation
 	radiusInMeters := radius * 1000
 
 	err := s.db.Table("locations l").
