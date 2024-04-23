@@ -1,5 +1,7 @@
 package dto
 
+import "go-challenge/internal/domain"
+
 type AvailableEVSELocation struct {
 	ID        string
 	Name      *string
@@ -7,5 +9,5 @@ type AvailableEVSELocation struct {
 	Latitude  float64
 	Longitude float64
 	UID       string
-	Status    int
+	Status    domain.Status
 }

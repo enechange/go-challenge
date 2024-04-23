@@ -28,7 +28,7 @@ func ConvertQueryResultToLocations(
 			locationsMap[availableEvseLocation.ID].EVSES,
 			domain.EVSE{
 				UID:    availableEvseLocation.UID,
-				Status: domain.Status(availableEvseLocation.Status),
+				Status: availableEvseLocation.Status,
 			},
 		)
 	}
