@@ -14,6 +14,8 @@ Please document any technical decisions, trade-offs, problems, etc., in REPORT.m
 #### Requirements:
 Please create an endpoint to search for chargers within a specified range, according to the interface specifications outlined in the provided PDF document.
 
+However, latitude and longitude should be stored as numerical values, and the filtering logic should be implemented in Go.
+
 You can use the provided CSV files as sample data by importing them into the database.
 
 While writing tests is not mandatory, please be mindful to design for testability.
