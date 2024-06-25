@@ -14,9 +14,7 @@ Please document any technical decisions, trade-offs, problems, etc., in REPORT.m
 #### Requirements:
 Please create an endpoint to search for chargers within a specified range, according to the interface specifications outlined in the provided PDF document.
 
-Latitude and longitude should be stored as numerical values.
-
-The rectangular filtering should be implemented in SQL, and the circular filtering should be implemented in Go.
+However, latitude and longitude should be stored separately as numerical values and the filtering logic should primarily be implemented in Go.
 
 You can use the provided CSV files as sample data by importing them into the database.
 
