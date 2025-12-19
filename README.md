@@ -31,7 +31,7 @@ While writing tests is not mandatory, please be mindful to design for testabilit
 - Language: GO
 - Libraries:
   - Web Application Framework: [Gin](https://gin-gonic.com/)
-  - ORM: [GORM](https://gorm.io/)
+  - Database Access: [sqlc](https://github.com/sqlc-dev/sqlc)
 
 #### Template:
 A template has been prepared in the codebase that sets up a server and prepares the connection to a database.

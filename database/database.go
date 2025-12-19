@@ -1,16 +1,16 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	_ "github.com/go-sql-driver/mysql"
 
 	config "go-challenge/config"
 )
 
 var (
-	dbMy *gorm.DB
+	dbMy *sql.DB
 	err  error
 )
 
@@ -19,8 +19,13 @@ func Init() {
 }
 
 func Close() {
-	my, _ := dbMy.DB()
-	my.Close()
+	if dbMy != nil {
+		dbMy.Close()
+	}
+}
+
+func GetDB() *sql.DB {
+	return dbMy
 }
 
 func openMySQL() {
@@ -37,9 +42,13 @@ func openMySQL() {
 		database,
 	)
 
-	dbMy, err = gorm.Open(mysql.Open(dsn))
+	dbMy, err = sql.Open("mysql", dsn)
 
 	if err != nil {
+		panic(err)
+	}
+
+	if err = dbMy.Ping(); err != nil {
 		panic(err)
 	}
 }
