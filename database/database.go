@@ -24,10 +24,6 @@ func Close() {
 	}
 }
 
-func GetDB() *sql.DB {
-	return dbMy
-}
-
 func openMySQL() {
 	cnf := config.GetConfig()
 
