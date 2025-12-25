@@ -31,10 +31,12 @@ services:
     image: mysql:8.0
     volumes:
       - go-challenge-mysql:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+      - ./sample:/sample
     environment:
       MYSQL_DATABASE: go-challenge_development
       MYSQL_ROOT_PASSWORD: password
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake --sql-mode=""
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake --sql-mode="" --local-infile=1
     ports:
       - 3306:3306
 

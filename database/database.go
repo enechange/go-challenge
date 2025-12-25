@@ -14,6 +14,10 @@ var (
 	err  error
 )
 
+func GetDB() *sql.DB {
+	return dbMy
+}
+
 func Init() {
 	openMySQL()
 }
