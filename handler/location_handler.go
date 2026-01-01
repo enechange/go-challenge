@@ -10,7 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const defaultRadius = 100.0
+const (
+	defaultRadius = 100.0
+
+	// 緯度の有効範囲（-90〜90度）
+	minLatitude = -90.0
+	maxLatitude = 90.0
+
+	// 経度の有効範囲（-180〜180度）
+	minLongitude = -180.0
+	maxLongitude = 180.0
+)
 
 type LocationHandler struct {
 	service service.LocationService
@@ -59,7 +69,7 @@ func (h *LocationHandler) GetLocations(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid latitude format"})
 		return
 	}
-	if lat < -90 || lat > 90 {
+	if lat < minLatitude || lat > maxLatitude {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "latitude must be between -90 and 90"})
 		return
 	}
@@ -69,7 +79,7 @@ func (h *LocationHandler) GetLocations(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid longitude format"})
 		return
 	}
-	if lng < -180 || lng > 180 {
+	if lng < minLongitude || lng > maxLongitude {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "longitude must be between -180 and 180"})
 		return
 	}
