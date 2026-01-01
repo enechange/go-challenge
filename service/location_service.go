@@ -49,6 +49,16 @@ func (s *locationService) SearchLocations(ctx context.Context, params SearchPara
 		return nil, err
 	}
 
+	allEVSEs, err := s.repo.GetAllEVSEs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	evseMap := make(map[int32][]repository.EVSEWithLocationID)
+	for _, e := range allEVSEs {
+		evseMap[e.LocationID] = append(evseMap[e.LocationID], e)
+	}
+
 	var results []LocationResult
 	for _, loc := range locations {
 		lat, _ := strconv.ParseFloat(loc.Latitude, 64)
@@ -59,13 +69,9 @@ func (s *locationService) SearchLocations(ctx context.Context, params SearchPara
 			continue
 		}
 
-		evses, err := s.repo.GetEVSEsByLocationID(ctx, loc.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		evseResults := make([]EVSEResult, len(evses))
-		for i, e := range evses {
+		locEVSEs := evseMap[loc.ID]
+		evseResults := make([]EVSEResult, len(locEVSEs))
+		for i, e := range locEVSEs {
 			evseResults[i] = EVSEResult{
 				UID:    e.UID,
 				Status: statusToString(e.Status),

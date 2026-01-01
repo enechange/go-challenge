@@ -26,6 +26,20 @@ func (m *mockLocationRepository) GetEVSEsByLocationID(ctx context.Context, locat
 	return m.evses[locationID], nil
 }
 
+func (m *mockLocationRepository) GetAllEVSEs(ctx context.Context) ([]repository.EVSEWithLocationID, error) {
+	var result []repository.EVSEWithLocationID
+	for locationID, evses := range m.evses {
+		for _, e := range evses {
+			result = append(result, repository.EVSEWithLocationID{
+				LocationID: locationID,
+				UID:        e.UID,
+				Status:     e.Status,
+			})
+		}
+	}
+	return result, nil
+}
+
 func TestSearchLocations_FiltersByRadius(t *testing.T) {
 	name1 := "Location 1"
 	name2 := "Location 2"

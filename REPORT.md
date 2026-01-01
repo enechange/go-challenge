@@ -145,14 +145,133 @@ func statusToString(status int32) string {
 
 ---
 
+### 9. エラーレスポンスの形式
+
+**決定**: 仕様書に定義がないため、独自にエラーレスポンス形式を設計
+
+```go
+// バリデーションエラー
+c.JSON(http.StatusBadRequest, gin.H{"error": "latitude is required"})
+
+// 内部エラー
+c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+```
+
+**HTTPステータスコード**:
+- 200 OK: 成功
+- 400 Bad Request: パラメータ不正（必須項目欠落、フォーマットエラー）
+- 500 Internal Server Error: DB接続エラーなど内部エラー
+
+**理由**:
+- RESTful APIの一般的な慣習に従った
+- エラーメッセージをJSONで返すことでクライアント側での処理が容易
+
+---
+
+### 10. DateTimeパースのフォールバック
+
+**決定**: RFC3339に加え、タイムゾーンなし形式もサポート
+
+```go
+t, err := time.Parse(time.RFC3339, dateFromStr)
+if err != nil {
+    // タイムゾーンなし形式にフォールバック
+    t, err = time.Parse("2006-01-02T15:04:05", dateFromStr)
+}
+```
+
+**理由**:
+- 仕様書のDateTime例に `2015-06-29T20:39:09`（タイムゾーンなし）が含まれている
+- クライアントの利便性を考慮し、両形式を受け付ける
+- タイムゾーンなしの場合はUTCとして扱う（OCPI仕様に準拠）
+
+---
+
+### 11. radius の型拡張
+
+**決定**: 仕様書では `int` だが、実装では `float64` を受け付ける
+
+**理由**:
+- より柔軟な検索半径の指定が可能（例: 0.5km）
+- `int` への暗黙的な変換も可能なため後方互換性あり
+
+---
+
+### 12. EVSEインデックスの追加
+
+**決定**: `location_id` にインデックスを追加
+
+```sql
+CREATE INDEX idx_evses_location_id ON evses(location_id);
+```
+
+**理由**:
+- EVSE取得時の検索パフォーマンス向上
+- LocationとEVSEの結合クエリが頻繁に発生するため必須
+
+---
+
+### 13. latitude/longitude のバリデーション
+
+**決定**: 仕様書のregexパターンによる厳密な検証は省略し、数値変換のみで検証
+
+```go
+lat, err := strconv.ParseFloat(latStr, 64)
+if err != nil {
+    c.JSON(http.StatusBadRequest, gin.H{"error": "invalid latitude format"})
+    return
+}
+```
+
+**仕様書のregex**: `-?[0-9]{1,2}\.[0-9]{5,7}`（小数点以下5-7桁）
+
+**理由**:
+- 実用上、数値として解釈できれば問題ない
+- 過度に厳密なバリデーションはクライアントの利便性を損なう
+- 地理的な範囲チェック（-90〜90, -180〜180）は今後の改善案として検討
+
+**トレードオフ**:
+- 仕様書に完全準拠していない
+- 不正な精度の座標も受け付けてしまう
+
+---
+
 ## 問題点・改善案
 
-### 1. N+1問題
-現在の実装では、ロケーションごとにEVSEを取得するためN+1クエリが発生する。
+### 1. N+1問題 (解決済み)
 
-**改善案**:
-- EVSEを一括取得してメモリ上でマッピング
-- JOINクエリで一度に取得
+**問題**: 当初の実装では、ロケーションごとにEVSEを取得するためN+1クエリが発生していた。
+
+```go
+// Before: N+1クエリ
+for _, loc := range locations {
+    evses, err := s.repo.GetEVSEsByLocationID(ctx, loc.ID) // ループ内でクエリ実行
+}
+```
+
+**解決策**: EVSEを一括取得してメモリ上でマッピングする方式に変更
+
+```go
+// After: 2クエリ
+allEVSEs, err := s.repo.GetAllEVSEs(ctx) // 1回で全件取得
+
+evseMap := make(map[int32][]repository.EVSEWithLocationID)
+for _, e := range allEVSEs {
+    evseMap[e.LocationID] = append(evseMap[e.LocationID], e)
+}
+
+for _, loc := range locations {
+    locEVSEs := evseMap[loc.ID] // O(1)でアクセス
+}
+```
+
+**効果**:
+- クエリ数: 1 + N → 2 に削減
+- ロケーション数が増えてもクエリ数は一定
+
+**トレードオフ**:
+- 全EVSEをメモリに保持するため、データ量が極端に多い場合はメモリ使用量が増加
+- 今回の課題規模では問題なし
 
 ### 2. 距離フィルタリングのパフォーマンス
 全ロケーションを取得してからGoでフィルタリングしているため、データ量が増えると遅くなる。

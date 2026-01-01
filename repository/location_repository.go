@@ -21,6 +21,12 @@ type EVSE struct {
 	Status int32
 }
 
+type EVSEWithLocationID struct {
+	LocationID int32
+	UID        string
+	Status     int32
+}
+
 type LocationWithEVSEs struct {
 	Location
 	EVSEs []EVSE
@@ -30,6 +36,7 @@ type LocationRepository interface {
 	GetAllLocations(ctx context.Context) ([]Location, error)
 	GetLocationsByDateRange(ctx context.Context, dateFrom, dateTo *time.Time) ([]Location, error)
 	GetEVSEsByLocationID(ctx context.Context, locationID int32) ([]EVSE, error)
+	GetAllEVSEs(ctx context.Context) ([]EVSEWithLocationID, error)
 }
 
 type locationRepository struct {
@@ -95,6 +102,23 @@ func (r *locationRepository) GetEVSEsByLocationID(ctx context.Context, locationI
 		evses[i] = EVSE{
 			UID:    e.Uid,
 			Status: e.Status,
+		}
+	}
+	return evses, nil
+}
+
+func (r *locationRepository) GetAllEVSEs(ctx context.Context) ([]EVSEWithLocationID, error) {
+	dbEVSEs, err := r.queries.GetAllEVSEs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	evses := make([]EVSEWithLocationID, len(dbEVSEs))
+	for i, e := range dbEVSEs {
+		evses[i] = EVSEWithLocationID{
+			LocationID: e.LocationID,
+			UID:        e.Uid,
+			Status:     e.Status,
 		}
 	}
 	return evses, nil
