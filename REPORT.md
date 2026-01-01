@@ -213,12 +213,16 @@ CREATE INDEX idx_evses_location_id ON evses(location_id);
 
 ### 13. latitude/longitude のバリデーション
 
-**決定**: 仕様書のregexパターンによる厳密な検証は省略し、数値変換のみで検証
+**決定**: 仕様書のregexパターンによる厳密な検証は省略し、数値変換と地理的範囲チェックで検証
 
 ```go
 lat, err := strconv.ParseFloat(latStr, 64)
 if err != nil {
     c.JSON(http.StatusBadRequest, gin.H{"error": "invalid latitude format"})
+    return
+}
+if lat < -90 || lat > 90 {
+    c.JSON(http.StatusBadRequest, gin.H{"error": "latitude must be between -90 and 90"})
     return
 }
 ```
@@ -228,11 +232,11 @@ if err != nil {
 **理由**:
 - 実用上、数値として解釈できれば問題ない
 - 過度に厳密なバリデーションはクライアントの利便性を損なう
-- 地理的な範囲チェック（-90〜90, -180〜180）は今後の改善案として検討
+- 地理的に無効な座標（緯度90超、経度180超）は明らかなエラーなので範囲チェックを追加
 
 **トレードオフ**:
-- 仕様書に完全準拠していない
-- 不正な精度の座標も受け付けてしまう
+- 仕様書のregexに完全準拠していない
+- 不正な精度の座標も受け付けてしまう（小数点以下5-7桁の制約なし）
 
 ---
 

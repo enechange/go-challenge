@@ -59,10 +59,18 @@ func (h *LocationHandler) GetLocations(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid latitude format"})
 		return
 	}
+	if lat < -90 || lat > 90 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "latitude must be between -90 and 90"})
+		return
+	}
 
 	lng, err := strconv.ParseFloat(lngStr, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid longitude format"})
+		return
+	}
+	if lng < -180 || lng > 180 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "longitude must be between -180 and 180"})
 		return
 	}
 
